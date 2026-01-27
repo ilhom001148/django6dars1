@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Davlat qo‘shish</title>
+    <style>
+        /* Umumiy tanlovlar */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f9f9f9, #d3e0ea);
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Form konteyneri */
+        .form-container {
+            background-color: #ffffff;
+            padding: 40px 35px;
+            border-radius: 15px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .form-container:hover {
+            transform: translateY(-5px);
+        }
+
+        h2 {
+            margin-bottom: 25px;
+            color: #333;
+            font-size: 28px;
+        }
+
+        /* Input va textarea */
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        textarea {
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        input:focus,
+        textarea:focus {
+            border-color: #4a90e2;
+            box-shadow: 0 0 8px rgba(74, 144, 226, 0.3);
+            outline: none;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* Labellar (agar xohlansa qo‘shish mumkin) */
+        label {
+            font-weight: 600;
+            color: #555;
+            display: block;
+            text-align: left;
+            margin-bottom: 5px;
+        }
+
+        /* Tugma */
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: #4a90e2;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+        button:hover {
+            background-color: #357ab8;
+            transform: translateY(-2px);
+        }
+
+        /* Ortga link */
+        .back-link {
+            margin-top: 15px;
+            display: inline-block;
+            color: #4a90e2;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive dizayn */
+        @media (max-width: 480px) {
+            .form-container {
+                padding: 30px 20px;
+            }
+
+            h2 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <h2>➕ Yangi davlat</h2>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <input type="text" name="nomi" placeholder="Davlat nomi" required>
+        <input type="text" name="poytaxti" placeholder="Poytaxti" required>
+        <input type="number" name="aholisi" placeholder="Aholisi" required>
+        <input type="date" name="mustaqillik_yili" required>
+        <textarea name="desc" placeholder="Tavsif"></textarea>
+
+        <button type="submit">Saqlash</button>
+    </form>
+
+    <a class="back-link" href="{% url 'index' %}">⬅ Ortga</a>
+</div>
+
+</body>
+</html>

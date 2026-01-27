@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>O‘chirish</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ff9a9e, #fecfef);
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .delete-container {
+            background-color: #ffffff;
+            padding: 35px 30px;
+            border-radius: 15px;
+            box-shadow: 0 12px 25px rgba(0,0,0,0.2);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .delete-container:hover {
+            transform: translateY(-5px);
+        }
+
+        h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        p {
+            font-size: 16px;
+            margin-bottom: 25px;
+            color: #555;
+        }
+
+        /* Tugmalar */
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+
+        .btn-delete {
+            background-color: #ff4d4f;
+            color: #fff;
+        }
+
+        .btn-delete:hover {
+            background-color: #d9363e;
+            transform: translateY(-2px);
+        }
+
+        .btn-cancel {
+            background-color: #ccc;
+            color: #333;
+            text-decoration: none;
+            display: inline-block;
+            line-height: normal;
+        }
+
+        .btn-cancel:hover {
+            background-color: #999;
+            color: #fff;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .delete-container {
+                padding: 25px 20px;
+            }
+
+            h2 {
+                font-size: 22px;
+            }
+
+            p {
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="delete-container">
+    <h2>{{ davlat.nomi }} ni o‘chirish</h2>
+    <p>Haqiqatan ham o‘chirmoqchimisiz?</p>
+
+    <form method="post" style="display:inline-block;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-delete">Ha, o‘chir</button>
+        <a href="{% url 'index' %}" class="btn btn-cancel">Yo‘q</a>
+    </form>
+</div>
+
+</body>
+</html>

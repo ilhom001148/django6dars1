@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>Davlatlar</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 800px;
+            margin: 40px auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 8px 14px;
+            border-radius: 6px;
+            text-decoration: none;
+            color: white;
+            font-size: 14px;
+        }
+
+        .btn-add {
+            background: #28a745;
+        }
+
+        .btn-login {
+            background: #007bff;
+        }
+
+        .btn-logout {
+            background: #dc3545;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            background: #fafafa;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+
+        .actions a {
+            margin-right: 10px;
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        .actions a.delete {
+            color: red;
+        }
+
+        .empty {
+            text-align: center;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <h2>🌍 Davlatlar ro‘yxati</h2>
+
+    <div class="top-bar">
+        {% if user.is_authenticated %}
+            <div>
+                👤 {{ user.username }}
+            </div>
+            <div>
+                <a href="{% url 'create' %}" class="btn btn-add">➕ Yangi davlat</a>
+                <a href="{% url 'logout' %}" class="btn btn-logout">Chiqish</a>
+            </div>
+        {% else %}
+            <div></div>
+            <div>
+                <a href="{% url 'login' %}" class="btn btn-login">Kirish</a>
+                <a href="{% url 'register' %}" class="btn btn-login">Ro‘yxatdan o‘tish</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <hr>
+
+    <ul>
+        {% for davlat in davlatlar %}
+            <li>
+                <b>{{ davlat.nomi }}</b> — {{ davlat.poytaxti }}
+                <br><br>
+                <div class="actions">
+                    <a href="{% url 'detail' davlat.id %}">Ko‘rish</a>
+
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'update' davlat.id %}">Tahrirlash</a>
+                        <a href="{% url 'delete' davlat.id %}"
+                           class="delete"
+                           onclick="return confirm('O‘chirishga ishonchingiz komilmi?')">
+                           O‘chirish
+                        </a>
+                    {% endif %}
+                </div>
+            </li>
+        {% empty %}
+            <li class="empty">Hozircha davlatlar yo‘q</li>
+        {% endfor %}
+    </ul>
+
+</div>
+
+</body>
+</html>
