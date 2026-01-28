@@ -7,5 +7,7 @@ urlpatterns=[
     path('login/', views.LoginView.as_view(), name='login'),
     path('logout/', views.logout_, name='logout'),
     path('verify_email/', views.Verify_EmailView.as_view(), name='verify_email'),
+    path('resend-code/', views.ResendCodeView.as_view(), name='resend_code'),
+
 
 ]

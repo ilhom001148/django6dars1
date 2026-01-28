@@ -6,6 +6,7 @@ from django.conf import settings
 
 from .utils import generate_code
 from .models import CustomUser, EmailCode
+from django.utils import timezone
 
 
 class RegisterView(View):
@@ -52,7 +53,6 @@ class RegisterView(View):
 
         EmailCode.objects.create(user=user, code=code)
 
-        # session’da USER ID saqlaymiz
         request.session['user_id'] = user.id
 
         return redirect('verify_email')
@@ -115,3 +115,118 @@ class LoginView(View):
 def logout_(request):
     logout(request)
     return redirect('login')
+
+
+
+class Verify_EmailView(View):
+    def get(self, request):
+        return render(request, 'auth/verify_email.html')
+
+    def post(self, request):
+        code = request.POST.get('code')
+        user_id = request.session.get('user_id')
+
+        if not user_id:
+            return redirect('register')
+
+        otp = EmailCode.objects.filter(
+            user_id=user_id,
+            code=code,
+            is_activated=False
+        ).last()
+
+        # ❌ Kod yo‘q
+        if not otp:
+            return render(request, 'auth/verify_email.html', {
+                'error': 'Kod noto‘g‘ri yoki eskirgan'
+            })
+
+        # ⏰ 2 MINUT O‘TGANMI?
+        if otp.is_expired():
+            return render(request, 'auth/verify_email.html', {
+                'error': 'Kodning muddati tugagan. Yangi kod so‘rang.'
+            })
+
+        # ✅ HAMMASI TO‘G‘RI
+        otp.is_activated = True
+        otp.save()
+
+        user = otp.user
+        user.is_active = True
+        user.save()
+
+        return redirect('login')
+
+
+
+#
+#
+# class Verify_EmailView(View):
+#     def get(self, request):
+#         return render(request, 'auth/verify_email.html')
+#
+#     def post(self, request):
+#         code = request.POST.get('code')
+#         user_id = request.session.get('user_id')
+#
+#         if not user_id:
+#             return redirect('register')
+#
+#         otp = EmailCode.objects.filter(
+#             user_id=user_id,
+#             code=code,
+#             is_activated=False
+#         ).last()
+#
+#         if not otp:
+#             return render(request, 'auth/verify_email.html', {
+#                 'error': 'Kod noto‘g‘ri'
+#             })
+#
+#
+#         if otp.is_expired():
+#             return render(request, 'auth/verify_email.html', {
+#                 'error': 'Kodning muddati tugagan. Yangi kod so‘rang.'
+#             })
+#
+#         otp.is_activated = True
+#         otp.save()
+#
+#         user = otp.user
+#         user.is_active = True
+#         user.save()
+#
+#         return redirect('login')
+
+
+
+class ResendCodeView(View):
+    def get(self, request):
+        user_id = request.session.get('user_id')
+
+        if not user_id:
+            return redirect('register')
+
+        user = CustomUser.objects.get(id=user_id)
+
+        EmailCode.objects.filter(user=user,is_activated=False).delete()
+
+        # eski aktiv bo‘lmagan kodlarni o‘chiramiz
+        EmailCode.objects.filter(user=user, is_activated=False).delete()
+
+        code = generate_code()
+
+        send_mail(
+            "Yangi tasdiqlash kodi",
+            f"Yangi kodingiz: {code}",
+            settings.EMAIL_HOST_USER,
+            [user.email],
+            fail_silently=False,
+        )
+
+        EmailCode.objects.create(user=user, code=code)
+
+        return render(request, 'auth/verify_email.html', {
+            'success': 'Yangi kod emailingizga yuborildi'
+        })
+

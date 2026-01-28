@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uz">
 <head>
     <meta charset="UTF-8">
     <title>Email Verification</title>
@@ -28,49 +28,28 @@
         }
 
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(15px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .card h2 {
+        h2 {
             text-align: center;
             margin-bottom: 10px;
-            color: #333;
         }
 
-        .card p {
+        p {
             text-align: center;
             font-size: 14px;
             color: #666;
-            margin-bottom: 20px;
-        }
-
-        label {
-            font-size: 14px;
-            color: #444;
         }
 
         input {
             width: 100%;
             padding: 12px;
-            margin-top: 6px;
-            margin-bottom: 15px;
+            margin: 15px 0;
             border-radius: 8px;
             border: 1px solid #ddd;
-            outline: none;
             font-size: 14px;
-            transition: 0.3s;
-        }
-
-        input:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 2px rgba(102,126,234,0.2);
         }
 
         button {
@@ -79,23 +58,46 @@
             background: linear-gradient(135deg, #667eea, #764ba2);
             border: none;
             border-radius: 8px;
-            color: white;
-            font-size: 15px;
+            color: #fff;
             font-weight: bold;
             cursor: pointer;
-            transition: 0.3s;
         }
 
-        button:hover {
-            opacity: 0.9;
-            transform: translateY(-1px);
-        }
-
-        .footer-text {
-            margin-top: 15px;
-            text-align: center;
+        .error {
+            color: red;
             font-size: 13px;
-            color: #777;
+            text-align: center;
+        }
+
+        .success {
+            color: green;
+            font-size: 13px;
+            text-align: center;
+        }
+
+        .timer {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #444;
+        }
+
+        .resend {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .resend a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: bold;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
+        .resend a.active {
+            pointer-events: auto;
+            opacity: 1;
         }
     </style>
 </head>
@@ -105,22 +107,50 @@
     <h2>📧 Email Tasdiqlash</h2>
     <p>Emailingizga yuborilgan kodni kiriting</p>
 
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+
+    {% if success %}
+        <p class="success">{{ success }}</p>
+    {% endif %}
+
     <form method="post">
         {% csrf_token %}
-
-        <label>Email</label>
-        <input type="email" name="email" placeholder="example@gmail.com" required>
-
-        <label>Tasdiqlash kodi</label>
         <input type="text" name="code" placeholder="6 xonali kod" required>
-
         <button type="submit">Tasdiqlash</button>
     </form>
 
-    <div class="footer-text">
-        Kod kelmadimi? Spam papkani tekshiring
+    <div class="timer">
+        ⏳ Qolgan vaqt: <span id="time">02:00</span>
+    </div>
+
+    <div class="resend">
+        <a href="{% url 'resend_code' %}" id="resendLink">🔁 Yangi kod yuborish</a>
     </div>
 </div>
+
+<script>
+    let time = 120; // 2 minut
+    const timerEl = document.getElementById('time');
+    const resendLink = document.getElementById('resendLink');
+
+    const interval = setInterval(() => {
+        let minutes = Math.floor(time / 60);
+        let seconds = time % 60;
+
+        timerEl.textContent =
+            `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+        if (time <= 0) {
+            clearInterval(interval);
+            timerEl.textContent = "00:00";
+            resendLink.classList.add('active');
+        }
+
+        time--;
+    }, 1000);
+</script>
 
 </body>
 </html>
